@@ -8,8 +8,58 @@ namespace Observer.Exercise;
 // Implement two variants: OOP Observer with an interface, and C# delegates/events.
 public class Downloader
 {
-    public void UpdateProgress(int percentage)
+
+    private readonly List<IChangeListener> eventListeners = new();
+
+    public int percentage;
+
+    public void AddListener(IChangeListener listener)
     {
-        // TODO: Update progress and notify subscribers.
+        eventListeners.Add(listener);
+    }
+
+        public void RemoveListener(IChangeListener listener)
+    {
+        eventListeners.Remove(listener);
+    }
+
+
+    public void UpdateProgress(int percentage)
+    {        
+        if (percentage == this.percentage)
+        {
+            return;
+        }
+        else
+        {
+            this.percentage = percentage;
+            foreach (var listener in eventListeners)
+            {
+                listener.OnProgressChanged(this.percentage);
+            }
+        }
+    }
+
+}
+
+
+class ProgressDisplay : IChangeListener
+{
+
+    public void OnProgressChanged(int percentage)
+    {
+        System.Console.WriteLine($"Current progress: {percentage}");
+    }
+}
+
+class CompleteListener : IChangeListener
+{
+
+    public void OnProgressChanged(int percentage)
+    {
+        if (percentage == 100)
+        {
+            System.Console.WriteLine($"Finished progress: {percentage}");
+        }
     }
 }

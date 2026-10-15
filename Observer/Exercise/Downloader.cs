@@ -6,10 +6,96 @@ namespace Observer.Exercise;
 // Demonstrate updates at 10, 50, and 100, and unsubscribing the progress display
 // while keeping the completion notification subscribed.
 // Implement two variants: OOP Observer with an interface, and C# delegates/events.
+
+
+// public class Downloader
+// {
+
+//     private readonly List<IChangeListener> eventListeners = new();
+
+//     public int percentage;
+
+//     public void AddListener(IChangeListener listener)
+//     {
+//         eventListeners.Add(listener);
+//     }
+
+//         public void RemoveListener(IChangeListener listener)
+//     {
+//         eventListeners.Remove(listener);
+//     }
+
+
+//     public void UpdateProgress(int percentage)
+//     {        
+//         if (percentage == this.percentage)
+//         {
+//             return;
+//         }
+//         else
+//         {
+//             this.percentage = percentage;
+//             foreach (var listener in eventListeners)
+//             {
+//                 listener.OnProgressChanged(this.percentage);
+//             }
+//         }
+//     }
+
+// }
+
+
+// class ProgressDisplay : IChangeListener
+// {
+
+//     public void OnProgressChanged(int percentage)
+//     {
+//         System.Console.WriteLine($"Current progress: {percentage}");
+//     }
+// }
+
+// class CompleteListener : IChangeListener
+// {
+
+//     public void OnProgressChanged(int percentage)
+//     {
+//         if (percentage == 100)
+//         {
+//             System.Console.WriteLine($"Finished progress: {percentage}");
+//         }
+//     }
+// }
 public class Downloader
 {
+    public event Action<int>? ProgressChanged;
+    private int percentage;
     public void UpdateProgress(int percentage)
     {
-        // TODO: Update progress and notify subscribers.
+        if (percentage == this.percentage)
+        {
+            return;
+        }
+        this.percentage = percentage;
+        ProgressChanged?.Invoke(this.percentage);
+    }
+
+}
+
+class EventProgressDisplay
+{
+    public void PrintProgress(int percentage)
+    {
+        System.Console.WriteLine($"Current progress: {percentage}");
+    }
+}
+
+class EventCompleteListener
+{
+    public void Finish(int percentage)
+    {
+        if (percentage == 100)
+        {
+            System.Console.WriteLine($"Complete progress: {percentage}");
+        }
     }
 }
